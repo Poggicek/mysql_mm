@@ -77,4 +77,5 @@ void TConnectOp::RunThinkPart()
 void TConnectOp::CancelThinkPart()
 {
 	mysql_close(m_pDatabase);
+	m_pCon->SetDatabase(nullptr);
 }

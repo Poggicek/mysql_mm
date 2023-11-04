@@ -52,6 +52,9 @@ MySQLConnection::~MySQLConnection()
         op->CancelThinkPart();
         delete op;
     }
+
+    if (m_pDatabase)
+        mysql_close(m_pDatabase);
 }
 
 bool MySQLConnection::Connect(ConnectCallbackFunc callback)
