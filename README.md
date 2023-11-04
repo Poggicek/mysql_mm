@@ -40,5 +40,5 @@ python3 ../configure.py -s cs2
 ambuild
 ```
 
-[!IMPORTANT]
-Linux builds requires `libmysqlclient-dev` package to be installed.
+> [!IMPORTANT]
+> Linux builds requires `libmysqlclient-dev` package to be installed.
