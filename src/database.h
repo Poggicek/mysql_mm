@@ -49,13 +49,15 @@ public:
     ~MySQLConnection();
 	void Connect(ConnectCallbackFunc callback);
     void Query(char* query, QueryCallbackFunc callback);
-    void Query(const char* query, QueryCallbackFunc callback);
+    void Query(const char* query, QueryCallbackFunc callback, ...);
     void Destroy();
 	void RunFrame();
     void SetDatabase(MYSQL* db) { m_pDatabase = db; }
     MYSQL* GetDatabase() { return m_pDatabase; }
     unsigned int GetInsertID();
     unsigned int GetAffectedRows();
+    std::string Escape(char* string);
+    std::string Escape(const char* string);
 
     MySQLConnectionInfo m_info;
 private:

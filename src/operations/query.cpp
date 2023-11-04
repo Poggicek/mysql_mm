@@ -31,9 +31,9 @@ TQueryOp::~TQueryOp()
 void TQueryOp::RunThreadPart()
 {
 	auto pDatabase = m_pCon->GetDatabase();
-	if (mysql_query(pDatabase, m_szQuery))
+	if (mysql_query(pDatabase, m_szQuery.c_str()))
 	{
-		ConMsg("MySQL query error: %s", mysql_error(pDatabase));
+		V_snprintf(m_szError, sizeof m_szError, "MySQL query error: %s\n", mysql_error(pDatabase));
 		return;
 	}
 
@@ -43,9 +43,16 @@ void TQueryOp::RunThreadPart()
 
 void TQueryOp::RunThinkPart()
 {
-	m_pQuery = new CMySQLQuery(m_pCon, m_res);
+	if (m_res)
+	{
+		m_pQuery = new CMySQLQuery(m_pCon, m_res);
 
-	m_callback(m_pQuery);
+		m_callback(m_pQuery);
+	}
+	else if(m_szError[0])
+	{
+		ConMsg("%s", m_szError);
+	}
 }
 
 void TQueryOp::CancelThinkPart()

@@ -26,7 +26,7 @@
 class TQueryOp : public ThreadOperation
 {
 public:
-	TQueryOp(MySQLConnection* con, char* query, QueryCallbackFunc func) : m_pCon(con), m_szQuery(query), m_callback(func)
+	TQueryOp(MySQLConnection* con, std::string query, QueryCallbackFunc func) : m_pCon(con), m_szQuery(query), m_callback(func)
 	{
 
 	}
@@ -38,8 +38,9 @@ public:
 	void RunThinkPart();
 private:
 	MySQLConnection* m_pCon;
-	char* m_szQuery;
+	std::string m_szQuery;
 	QueryCallbackFunc m_callback;
 	MYSQL_RES* m_res = nullptr;
 	CMySQLQuery* m_pQuery = nullptr;
+	char m_szError[255];
 };

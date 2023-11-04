@@ -80,14 +80,14 @@ bool MySQLPlugin::Load(PluginId id, ISmmAPI *ismm, char *error, size_t maxlen, b
 
 #if 0
 	MySQLConnectionInfo info{.host="test", .user="test", .pass="test", .database="test"};
-	g_mysql = new MySQLConnection(info);
+	auto g_mysql = g_mysqlClient->CreateMySQLConnection(info);
 
-	g_mysql->Connect([](bool connect) {
+	g_mysql->Connect([g_mysql](bool connect) {
 		if (connect)
 		{
 			ConMsg("CONNECTED\n");
 
-			g_mysql->Query("SELECT * FROM test1", [](IMySQLQuery* test)
+			g_mysql->Query("SELECT * FROM test1 WHERE test = '%s'", [g_mysql](IMySQLQuery* test)
 			{
 				auto results = test->GetResultSet();
 				ConMsg("Callback rows %i\n", results->GetRowCount());
@@ -95,11 +95,15 @@ bool MySQLPlugin::Load(PluginId id, ISmmAPI *ismm, char *error, size_t maxlen, b
 				{
 					ConMsg("ID: %i, str: %s\n", results->GetInt(0), results->GetString(1));
 				}
-			});
+				g_mysql->Destroy(); // Expected life cycle of a mysql connection is starting in plugin start and ending in plugin end, ideally don't do this
+				delete g_mysql;
+			}, g_mysql->Escape("te\"st").c_str());
 		}
 		else
 		{
 			ConMsg("Failed to connect\n");
+			g_mysql->Destroy();
+			delete g_mysql;
 		}
 	});
 #endif

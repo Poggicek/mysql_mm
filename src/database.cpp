@@ -24,6 +24,7 @@
 
 #include "operations/connect.h"
 #include "operations/query.h"
+#include <cstdarg>
 
 extern std::vector<MySQLConnection*> g_vecMysqlConnections;
 
@@ -76,14 +77,34 @@ void MySQLConnection::Query(char* query, QueryCallbackFunc callback)
         return;
     }
 
-    TQueryOp* op = new TQueryOp(this, query, callback);
+    TQueryOp* op = new TQueryOp(this, std::string(query), callback);
 
     AddToThreadQueue(op);
 }
 
-void MySQLConnection::Query(const char* query, QueryCallbackFunc callback)
+void MySQLConnection::Query(const char* query, QueryCallbackFunc callback, ...)
 {
-    Query(const_cast<char*>(query), callback);
+    va_list args;
+    va_start(args, callback);
+
+    va_list vaCopy;
+    va_copy(vaCopy, args);
+    const int iLen = std::vsnprintf(NULL, 0, query, vaCopy);
+    va_end(vaCopy);
+
+    std::vector<char> zc(iLen + 1);
+    std::vsnprintf(zc.data(), zc.size(), query, args);
+    va_end(args);
+
+    if (!m_pDatabase)
+    {
+        Warning("Failed querying a disconnected database (%s).\n", m_info.host);
+        return;
+    }
+
+    TQueryOp* op = new TQueryOp(this, std::string(zc.data(), zc.size()), callback);
+
+    AddToThreadQueue(op);
 }
 
 void MySQLConnection::Destroy()
@@ -163,4 +184,21 @@ unsigned int MySQLConnection::GetInsertID()
 unsigned int MySQLConnection::GetAffectedRows()
 {
     return mysql_affected_rows(m_pDatabase);
+}
+
+std::string MySQLConnection::Escape(const char* string)
+{
+    return Escape(const_cast<char*>(string));
+}
+
+std::string MySQLConnection::Escape(char* string)
+{
+    size_t size = strlen(string);
+    char* buffer = new char[size * 2 + 1];
+
+    mysql_real_escape_string(m_pDatabase, buffer, string, size);
+
+    std::string out(buffer);
+    delete[] buffer;
+    return out;
 }

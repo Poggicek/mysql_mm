@@ -22,6 +22,7 @@
 #pragma once
 
 #include <functional>
+#include <string>
 
 #define MYSQLMM_INTERFACE "IMySQLClient"
 
@@ -86,6 +87,8 @@ class IMySQLQuery
 public:
 	virtual IMySQLResult* GetResultSet() = 0;
 	virtual bool FetchMoreResults() = 0;
+	virtual unsigned int GetInsertId() = 0;
+	virtual unsigned int GetAffectedRows() = 0;
 };
 
 struct MySQLConnectionInfo
@@ -105,6 +108,7 @@ public:
 	virtual void Query(char* query, QueryCallbackFunc callback) = 0;
 	virtual void Query(const char* query, QueryCallbackFunc callback) = 0;
 	virtual void Destroy() = 0;
+	virtual std::string Escape(char* string) = 0;
 };
 
 class IMySQLClient
