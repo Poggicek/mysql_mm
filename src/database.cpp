@@ -23,10 +23,11 @@
 #include "tier0/dbg.h"
 
 #include "operations/connect.h"
+#include "operations/query.h"
 
 MySQLConnection::MySQLConnection(const MySQLConnectionInfo info)
 {
-    this->info = info;
+    this->m_info = info;
 }
 
 MySQLConnection::~MySQLConnection()
@@ -57,12 +58,29 @@ MySQLConnection::~MySQLConnection()
         mysql_close(m_pDatabase);
 }
 
-bool MySQLConnection::Connect(ConnectCallbackFunc callback)
+void MySQLConnection::Connect(ConnectCallbackFunc callback)
 {
     TConnectOp* op = new TConnectOp(this, callback);
 
     AddToThreadQueue(op);
-    return true;
+}
+
+void MySQLConnection::Query(char* query, QueryCallbackFunc callback)
+{
+    if (!m_pDatabase)
+    {
+        Warning("Failed querying a disconnected database (%s).\n", m_info.host);
+        return;
+    }
+
+    TQueryOp* op = new TQueryOp(this, query, callback);
+
+    AddToThreadQueue(op);
+}
+
+void MySQLConnection::Query(const char* query, QueryCallbackFunc callback)
+{
+    Query(const_cast<char*>(query), callback);
 }
 
 void MySQLConnection::RunFrame()

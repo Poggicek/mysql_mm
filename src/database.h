@@ -30,8 +30,10 @@
 #include <thread>
 #include <condition_variable>
 #include <functional>
+#include "public/mysql_mm.h"
 
 typedef std::function<void(bool)> ConnectCallbackFunc;
+typedef std::function<void(IMySQLQuery*)> QueryCallbackFunc;
 
 class ThreadOperation
 {
@@ -56,11 +58,14 @@ class MySQLConnection
 public:
     MySQLConnection(const MySQLConnectionInfo info);
     ~MySQLConnection();
-	bool Connect(ConnectCallbackFunc callback);
+	void Connect(ConnectCallbackFunc callback);
+    void Query(char* query, QueryCallbackFunc callback);
+    void Query(const char* query, QueryCallbackFunc callback);
 	void RunFrame();
     void SetDatabase(MYSQL* db) { m_pDatabase = db; }
+    MYSQL* GetDatabase() { return m_pDatabase; }
 
-    MySQLConnectionInfo info;
+    MySQLConnectionInfo m_info;
 private:
     void ThreadRun();
     void AddToThreadQueue(ThreadOperation* threadOperation);

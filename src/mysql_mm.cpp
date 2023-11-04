@@ -68,19 +68,29 @@ bool MySQLPlugin::Load(PluginId id, ISmmAPI *ismm, char *error, size_t maxlen, b
 
 	if (mysql_library_init(0, NULL, NULL))
 	{
-		snprintf(error, maxlen, "Failed to initialize mysql library");
+		snprintf(error, maxlen, "Failed to initialize mysql library\n");
 		return false;
 	}
 
 	// Test connection
 
-	MySQLConnectionInfo info{.host="test", .user="test", .pass="test", .database="test"};
+	MySQLConnectionInfo info{.host="85.255.1.237", .user="test", .pass="test987456321", .database="test"};
 	g_mysql = new MySQLConnection(info);
 
 	g_mysql->Connect([](bool connect) {
 		if (connect)
 		{
 			ConMsg("CONNECTED\n");
+
+			g_mysql->Query("SELECT * FROM test1", [](IMySQLQuery* test)
+			{
+				auto results = test->GetResultSet();
+				ConMsg("Callback rows %i\n", results->GetRowCount());
+				while (results->FetchRow())
+				{
+					ConMsg("ID: %i, str: %s\n", results->GetInt(0), results->GetString(1));
+				}
+			});
 		}
 		else
 		{

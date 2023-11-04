@@ -170,12 +170,17 @@
   <ItemGroup>
     <ClCompile Include="src\mysql_mm.cpp" />
     <ClCompile Include="src\database.cpp" />
+    <ClCompile Include="src\mysql_result.cpp" />
     <ClCompile Include="src\operations\connect.cpp" />
+    <ClCompile Include="src\operations\query.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\mysql_mm.h" />
     <ClInclude Include="src\database.h" />
+    <ClInclude Include="src\mysql_result.h" />
     <ClInclude Include="src\operations\connect.h" />
+    <ClInclude Include="src\public\mysql_mm.h" />
+    <ClInclude Include="src\operations\query.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

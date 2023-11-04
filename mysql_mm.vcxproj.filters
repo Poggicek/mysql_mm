@@ -15,6 +15,9 @@
     <Filter Include="Header Files\operations">
       <UniqueIdentifier>{fe6c97b0-5e88-42d9-b12f-1fa8063e23b9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\public">
+      <UniqueIdentifier>{f36eabff-4948-4353-89ad-aeb51afc3efc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\mysql_mm.cpp">
@@ -26,6 +29,12 @@
     <ClCompile Include="src\operations\connect.cpp">
       <Filter>Source Files\operations</Filter>
     </ClCompile>
+    <ClCompile Include="src\operations\query.cpp">
+      <Filter>Source Files\operations</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mysql_result.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\mysql_mm.h">
@@ -36,6 +45,15 @@
     </ClInclude>
     <ClInclude Include="src\operations\connect.h">
       <Filter>Header Files\operations</Filter>
+    </ClInclude>
+    <ClInclude Include="src\operations\query.h">
+      <Filter>Header Files\operations</Filter>
+    </ClInclude>
+    <ClInclude Include="src\public\mysql_mm.h">
+      <Filter>Header Files\public</Filter>
+    </ClInclude>
+    <ClInclude Include="src\mysql_result.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

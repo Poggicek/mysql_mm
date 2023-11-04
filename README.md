@@ -10,7 +10,7 @@ MySQLMM is a simple non-blocking MySQL connector for MetaMod.
 
 # Todo
 
-- [ ] Add query operation
+- [x] Add query operation
 - [ ] Create interface and expose through meta factory
 
 # Interface

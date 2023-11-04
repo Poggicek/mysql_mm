@@ -19,23 +19,37 @@
  * this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
-#include "../database.h"
+#include "query.h"
+#include "tier0/dbg.h"
+#include "../mysql_result.h"
 
-class TConnectOp : public ThreadOperation
+TQueryOp::~TQueryOp()
 {
-public:
-	TConnectOp(MySQLConnection* con, ConnectCallbackFunc func) : m_pCon(con), m_callback(func)
-	{
+	delete m_pQuery;
+}
 
+void TQueryOp::RunThreadPart()
+{
+	auto pDatabase = m_pCon->GetDatabase();
+	if (mysql_query(pDatabase, m_szQuery))
+	{
+		ConMsg("MySQL query error: %s", mysql_error(pDatabase));
+		return;
 	}
 
-	void RunThreadPart();
-	void CancelThinkPart();
-	void RunThinkPart();
-private:
-	MySQLConnection* m_pCon;
-	ConnectCallbackFunc m_callback;
-	MYSQL* m_pDatabase = nullptr;
-	char m_szError[255];
-};
+	if (mysql_field_count(pDatabase))
+		m_res = mysql_store_result(pDatabase);
+}
+
+void TQueryOp::RunThinkPart()
+{
+	m_pQuery = new CMySQLQuery(m_pCon->GetDatabase(), m_res);
+
+	m_callback(m_pQuery);
+}
+
+void TQueryOp::CancelThinkPart()
+{
+	mysql_close(m_pCon->GetDatabase());
+	m_pCon->SetDatabase(nullptr);
+}

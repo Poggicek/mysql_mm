@@ -40,28 +40,29 @@ void TConnectOp::RunThreadPart()
 	bool my_true = true;
 	mysql_options(mysql, MYSQL_OPT_RECONNECT, (const char*)&my_true); // deprecated
 
-	if (m_pCon->info.host[0] == '/')
+	if (m_pCon->m_info.host[0] == '/')
 	{
 		host = "localhost";
 		socket = host;
 	}
 	else
 	{
-		host = m_pCon->info.host;
+		host = m_pCon->m_info.host;
 		socket = NULL;
 	}
 
 	if (!mysql_real_connect(mysql,
 		host,
-		m_pCon->info.user,
-		m_pCon->info.pass,
-		m_pCon->info.database,
+		m_pCon->m_info.user,
+		m_pCon->m_info.pass,
+		m_pCon->m_info.database,
 		3306,
 		socket,
 		((1) << 17)))
 	{
 
 		mysql_close(mysql);
+		strncpy(m_szError, mysql_error(mysql), sizeof m_szError);
 		return;
 	}
 
@@ -70,6 +71,9 @@ void TConnectOp::RunThreadPart()
 
 void TConnectOp::RunThinkPart()
 {
+	if (m_szError[0])
+		ConMsg("Failed to establish a MySQL connection: %s\n", m_szError);
+
 	m_pCon->SetDatabase(m_pDatabase);
 	m_callback(m_pDatabase != nullptr);
 }
