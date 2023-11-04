@@ -86,6 +86,8 @@ class IMySQLQuery
 public:
 	virtual IMySQLResult* GetResultSet() = 0;
 	virtual bool FetchMoreResults() = 0;
+	virtual unsigned int GetInsertId() = 0;
+	virtual unsigned int GetAffectedRows() = 0;
 };
 
 struct MySQLConnectionInfo

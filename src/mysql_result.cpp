@@ -190,9 +190,10 @@ int CMySQLResult::GetInt(unsigned int columnId)
 	return atoi(m_Row[columnId]);
 }
 
-CMySQLQuery::CMySQLQuery(MYSQL* db, MYSQL_RES* res) : m_pDatabase(db), m_res(res)
+CMySQLQuery::CMySQLQuery(MySQLConnection* db, MYSQL_RES* res) : m_pDatabase(db), m_res(res)
 {
-
+	m_insertId = m_pDatabase->GetInsertID();
+	m_affectedRows = m_pDatabase->GetAffectedRows();
 }
 
 IMySQLResult* CMySQLQuery::GetResultSet()
@@ -207,23 +208,24 @@ IMySQLResult* CMySQLQuery::GetResultSet()
 
 bool CMySQLQuery::FetchMoreResults()
 {
+	auto pDatabase = m_pDatabase->GetDatabase();
 	if (m_res.m_pRes == NULL)
 	{
 		return false;
 	}
-	else if (!mysql_more_results(m_pDatabase)) {
+	else if (!mysql_more_results(pDatabase)) {
 		return false;
 	}
 
 	mysql_free_result(m_res.m_pRes);
 	m_res.m_pRes = NULL;
 
-	if (mysql_next_result(m_pDatabase) != 0)
+	if (mysql_next_result(pDatabase) != 0)
 	{
 		return false;
 	}
 
-	m_res.m_pRes = mysql_store_result(m_pDatabase);
+	m_res.m_pRes = mysql_store_result(pDatabase);
 	m_res.Update();
 
 	return (m_res.m_pRes != NULL);
@@ -241,4 +243,15 @@ CMySQLQuery::~CMySQLQuery()
 	{
 		mysql_free_result(m_res.m_pRes);
 	}
+}
+
+
+unsigned int CMySQLQuery::GetInsertId()
+{
+	return m_insertId;
+}
+
+unsigned int CMySQLQuery::GetAffectedRows()
+{
+	return m_affectedRows;
 }

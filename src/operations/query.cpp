@@ -43,7 +43,7 @@ void TQueryOp::RunThreadPart()
 
 void TQueryOp::RunThinkPart()
 {
-	m_pQuery = new CMySQLQuery(m_pCon->GetDatabase(), m_res);
+	m_pQuery = new CMySQLQuery(m_pCon, m_res);
 
 	m_callback(m_pQuery);
 }

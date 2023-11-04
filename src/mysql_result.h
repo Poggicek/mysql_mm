@@ -21,14 +21,10 @@
 
 #pragma once
 
-#if WIN32
-#include <mysql.h>
-#else
-#include <mysql/mysql.h>
-#endif
-
+#include "database.h"
 #include "public/mysql_mm.h"
 
+class MySQLConnection;
 class CMySQLQuery;
 
 class CMySQLResult : public IMySQLResult, IMySQLRow
@@ -69,11 +65,15 @@ class CMySQLQuery : public IMySQLQuery
 {
 	friend class CMySQLResult;
 public:
-	CMySQLQuery(MYSQL* db, MYSQL_RES* res);
+	CMySQLQuery(MySQLConnection* db, MYSQL_RES* res);
 	~CMySQLQuery();
 	IMySQLResult* GetResultSet();
 	bool FetchMoreResults();
+	unsigned int GetInsertId();
+	unsigned int GetAffectedRows();
 private:
-	MYSQL* m_pDatabase;
+	MySQLConnection* m_pDatabase;
 	CMySQLResult m_res;
+	unsigned int m_insertId;
+	unsigned int m_affectedRows;
 };

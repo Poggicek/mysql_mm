@@ -54,6 +54,8 @@ public:
 	void RunFrame();
     void SetDatabase(MYSQL* db) { m_pDatabase = db; }
     MYSQL* GetDatabase() { return m_pDatabase; }
+    unsigned int GetInsertID();
+    unsigned int GetAffectedRows();
 
     MySQLConnectionInfo m_info;
 private:

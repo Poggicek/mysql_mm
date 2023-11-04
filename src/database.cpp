@@ -154,3 +154,13 @@ void MySQLConnection::AddToThreadQueue(ThreadOperation* threadOperation)
         m_QueueEvent.notify_one();
     }
 }
+
+unsigned int MySQLConnection::GetInsertID()
+{
+    return mysql_insert_id(m_pDatabase);
+}
+
+unsigned int MySQLConnection::GetAffectedRows()
+{
+    return mysql_affected_rows(m_pDatabase);
+}
