@@ -41,4 +41,4 @@ ambuild
 ```
 
 > [!IMPORTANT]
-> Linux builds requires `libmysqlclient-dev` package to be installed.
+> Linux build requires `libmysqlclient-dev` package to be installed.
