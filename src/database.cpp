@@ -33,9 +33,25 @@ MySQLConnection::~MySQLConnection()
 {
 	if (m_thread)
 	{
+        {
+            std::lock_guard<std::mutex> lock(m_Lock);
+            m_Terminate = true;
+            m_QueueEvent.notify_all();
+        }
+
 		m_thread->join();
 		m_thread.reset();
+        m_Terminate = false;
 	}
+
+    while (!m_ThinkQueue.empty())
+    {
+        ThreadOperation* op = m_ThinkQueue.front();
+        m_ThinkQueue.pop();
+
+        op->CancelThinkPart();
+        delete op;
+    }
 }
 
 bool MySQLConnection::Connect(ConnectCallbackFunc callback)
@@ -73,6 +89,9 @@ void MySQLConnection::ThreadRun()
     {
         if (m_threadQueue.empty())
         {
+            if (m_Terminate)
+                return;
+
             m_QueueEvent.wait(lock);
             continue;
         }
@@ -98,7 +117,7 @@ void MySQLConnection::AddToThreadQueue(ThreadOperation* threadOperation)
 {
 
     if(!m_thread)
-		m_thread = std::unique_ptr<std::thread>(new std::thread(&MySQLConnection::ThreadRun, this));
+	    m_thread = std::unique_ptr<std::thread>(new std::thread(&MySQLConnection::ThreadRun, this));
 
     {
         std::lock_guard<std::mutex> lock(m_Lock);

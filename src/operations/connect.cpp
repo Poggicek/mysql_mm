@@ -62,10 +62,19 @@ void TConnectOp::RunThreadPart()
 	{
 
 		mysql_close(mysql);
-		m_callback(false);
-
 		return;
 	}
 
-	m_callback(true);
+	m_pDatabase = mysql;
+}
+
+void TConnectOp::RunThinkPart()
+{
+	m_pCon->SetDatabase(m_pDatabase);
+	m_callback(m_pDatabase != nullptr);
+}
+
+void TConnectOp::CancelThinkPart()
+{
+	mysql_close(m_pDatabase);
 }

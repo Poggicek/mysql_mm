@@ -31,16 +31,10 @@ public:
 	}
 
 	void RunThreadPart();
-	void CancelThinkPart()
-	{
-
-	}
-
-	void RunThinkPart()
-	{
-
-	}
+	void CancelThinkPart();
+	void RunThinkPart();
 private:
 	MySQLConnection* m_pCon;
 	ConnectCallbackFunc m_callback;
+	MYSQL* m_pDatabase = nullptr;
 };

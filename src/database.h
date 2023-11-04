@@ -58,6 +58,7 @@ public:
     ~MySQLConnection();
 	bool Connect(ConnectCallbackFunc callback);
 	void RunFrame();
+    void SetDatabase(MYSQL* db) { m_pDatabase = db; }
 
     MySQLConnectionInfo info;
 private:
@@ -70,4 +71,6 @@ private:
     std::condition_variable m_QueueEvent;
     std::mutex m_Lock;
 	std::mutex m_ThinkLock;
+    bool m_Terminate = false;
+    MYSQL* m_pDatabase = nullptr;
 };
