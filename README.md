@@ -11,33 +11,7 @@ MySQLMM is a simple non-blocking MySQL connector for MetaMod.
 # Interface
 
 MySQLMM will expose an interface in `OnMetamodQuery` which can then be queried with `(IMySQLClient*)g_SMAPI->MetaFactory(MYSQLMM_INTERFACE, &ret, NULL);` by other plugins.
-
-```cpp
-struct MySQLConnectionInfo
-{
-	const char* host;
-	const char* user;
-	const char* pass;
-	const char* database;
-	int port = 3306;
-	int timeout = 60;
-};
-
-class IMySQLConnection
-{
-public:
-	virtual void Connect(ConnectCallbackFunc callback) = 0;
-	virtual void Query(char* query, QueryCallbackFunc callback) = 0;
-	virtual void Query(const char* query, QueryCallbackFunc callback) = 0;
-	virtual void Destroy() = 0;
-};
-
-class IMySQLClient
-{
-public:
-	virtual IMySQLConnection* CreateMySQLConnection(MySQLConnectionInfo info) = 0;
-};
-```
+Interface definition can be found in `src/public`.
 
 ## Compilation
 
