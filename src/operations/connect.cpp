@@ -1,0 +1,71 @@
+/**
+ * =============================================================================
+ * CS2Fixes
+ * Copyright (C) 2023 Source2ZE
+ * Original code from SourceMod
+ * Copyright (C) 2004-2014 AlliedModders LLC
+ * =============================================================================
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, version 3.0, as published by the
+ * Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include "connect.h"
+#include "tier0/dbg.h"
+
+void TConnectOp::RunThreadPart()
+{
+	MYSQL* mysql = mysql_init(NULL);
+
+	if (!mysql)
+		Error("Uh oh, mysql is null!");
+
+	const char* host = NULL, * socket = NULL;
+
+	int timeout = 60;
+
+	mysql_options(mysql, MYSQL_OPT_CONNECT_TIMEOUT, (const char*)&timeout);
+	mysql_options(mysql, MYSQL_OPT_READ_TIMEOUT, (const char*)&timeout);
+	mysql_options(mysql, MYSQL_OPT_WRITE_TIMEOUT, (const char*)&timeout);
+
+	bool my_true = true;
+	mysql_options(mysql, MYSQL_OPT_RECONNECT, (const char*)&my_true); // deprecated
+
+	if (m_pCon->info.host[0] == '/')
+	{
+		host = "localhost";
+		socket = host;
+	}
+	else
+	{
+		host = m_pCon->info.host;
+		socket = NULL;
+	}
+
+	if (!mysql_real_connect(mysql,
+		host,
+		m_pCon->info.user,
+		m_pCon->info.pass,
+		m_pCon->info.database,
+		3306,
+		socket,
+		((1) << 17)))
+	{
+
+		mysql_close(mysql);
+		m_callback(false);
+
+		return;
+	}
+
+	m_callback(true);
+}
