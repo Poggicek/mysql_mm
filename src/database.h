@@ -32,9 +32,6 @@
 #include <functional>
 #include "public/mysql_mm.h"
 
-typedef std::function<void(bool)> ConnectCallbackFunc;
-typedef std::function<void(IMySQLQuery*)> QueryCallbackFunc;
-
 class ThreadOperation
 {
 public:
@@ -45,15 +42,7 @@ private:
 };
 
 
-struct MySQLConnectionInfo
-{
-    const char* host;
-    const char* user;
-    const char* pass;
-    const char* database;
-};
-
-class MySQLConnection
+class MySQLConnection : public IMySQLConnection
 {
 public:
     MySQLConnection(const MySQLConnectionInfo info);
@@ -61,6 +50,7 @@ public:
 	void Connect(ConnectCallbackFunc callback);
     void Query(char* query, QueryCallbackFunc callback);
     void Query(const char* query, QueryCallbackFunc callback);
+    void Destroy();
 	void RunFrame();
     void SetDatabase(MYSQL* db) { m_pDatabase = db; }
     MYSQL* GetDatabase() { return m_pDatabase; }

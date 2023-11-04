@@ -25,6 +25,8 @@
 #include "operations/connect.h"
 #include "operations/query.h"
 
+extern std::vector<MySQLConnection*> g_vecMysqlConnections;
+
 MySQLConnection::MySQLConnection(const MySQLConnectionInfo info)
 {
     this->m_info = info;
@@ -32,6 +34,7 @@ MySQLConnection::MySQLConnection(const MySQLConnectionInfo info)
 
 MySQLConnection::~MySQLConnection()
 {
+    ConMsg("Destroying MySQL connection %s\n", m_info.database);
 	if (m_thread)
 	{
         {
@@ -81,6 +84,12 @@ void MySQLConnection::Query(char* query, QueryCallbackFunc callback)
 void MySQLConnection::Query(const char* query, QueryCallbackFunc callback)
 {
     Query(const_cast<char*>(query), callback);
+}
+
+void MySQLConnection::Destroy()
+{
+    g_vecMysqlConnections.erase(std::remove(g_vecMysqlConnections.begin(), g_vecMysqlConnections.end(), this), g_vecMysqlConnections.end());
+    delete this;
 }
 
 void MySQLConnection::RunFrame()

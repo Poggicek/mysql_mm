@@ -1,20 +1,15 @@
 /**
- * =============================================================================
- * CS2Fixes
- * Copyright (C) 2023 Source2ZE
- * =============================================================================
+ * vim: set ts=4 sw=4 tw=99 noet :
+ * ======================================================
+ * Metamod:Source Sample Plugin
+ * Written by AlliedModders LLC.
+ * ======================================================
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, version 3.0, as published by the
- * Free Software Foundation.
+ * This software is provided 'as-is', without any express or implied warranty.
+ * In no event will the authors be held liable for any damages arising from 
+ * the use of this software.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program.  If not, see <http://www.gnu.org/licenses/>.
+ * This sample plugin is public domain.
  */
 
 #ifndef _INCLUDE_METAMOD_SOURCE_STUB_PLUGIN_H_
@@ -25,7 +20,7 @@
 #include <iplayerinfo.h>
 #include <sh_vector.h>
 
-class MySQLPlugin : public ISmmPlugin, public IMetamodListener
+class SamplePlugin : public ISmmPlugin, public IMetamodListener
 {
 public:
 	bool Load(PluginId id, ISmmAPI *ismm, char *error, size_t maxlen, bool late);
@@ -33,7 +28,6 @@ public:
 	bool Pause(char *error, size_t maxlen);
 	bool Unpause(char *error, size_t maxlen);
 	void AllPluginsLoaded();
-	void* OnMetamodQuery(const char* iface, int* ret);
 public: //hooks
 	void OnLevelInit( char const *pMapName,
 				 char const *pMapEntities,
@@ -61,7 +55,7 @@ public:
 	const char *GetLogTag();
 };
 
-extern MySQLPlugin g_MySQLPlugin;
+extern SamplePlugin g_SamplePlugin;
 
 PLUGIN_GLOBALVARS();
 

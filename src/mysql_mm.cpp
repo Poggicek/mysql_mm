@@ -29,14 +29,16 @@
 #include "mysql_mm.h"
 #include "iserver.h"
 #include "database.h"
+#include "mysql_client.h"
 
 SH_DECL_HOOK3_void(IServerGameDLL, GameFrame, SH_NOATTRIB, 0, bool, bool, bool);
 
 MySQLPlugin g_MySQLPlugin;
-IServerGameDLL *server = NULL;
-IVEngineServer *engine = NULL;
+IServerGameDLL *server = nullptr;
+IVEngineServer *engine = nullptr;
+IMySQLClient* g_mysqlClient = nullptr;
 
-MySQLConnection *g_mysql;
+std::vector<MySQLConnection*> g_vecMysqlConnections;
 
 // Should only be called within the active game loop (i e map should be loaded and active)
 // otherwise that'll be nullptr!
@@ -72,8 +74,11 @@ bool MySQLPlugin::Load(PluginId id, ISmmAPI *ismm, char *error, size_t maxlen, b
 		return false;
 	}
 
-	// Test connection
+	g_mysqlClient = new CMySQLClient();
 
+	// Test connection without interface
+
+#if 0
 	MySQLConnectionInfo info{.host="test", .user="test", .pass="test", .database="test"};
 	g_mysql = new MySQLConnection(info);
 
@@ -97,6 +102,7 @@ bool MySQLPlugin::Load(PluginId id, ISmmAPI *ismm, char *error, size_t maxlen, b
 			ConMsg("Failed to connect\n");
 		}
 	});
+#endif
 
 	return true;
 }
@@ -105,14 +111,27 @@ bool MySQLPlugin::Unload(char *error, size_t maxlen)
 {
 	mysql_library_end();
 
+	delete g_mysqlClient;
+
 	return true;
 }
 
 void MySQLPlugin::AllPluginsLoaded()
 {
-	/* This is where we'd do stuff that relies on the mod or other plugins 
-	 * being initialized (for example, cvars added and events registered).
-	 */
+	
+
+}
+
+void* MySQLPlugin::OnMetamodQuery(const char* iface, int* ret)
+{
+	if (!strcmp(iface, MYSQLMM_INTERFACE))
+	{
+		*ret = META_IFACE_OK;
+		return g_mysqlClient;
+	}
+
+	*ret = META_IFACE_FAILED;
+	return nullptr;
 }
 
 void MySQLPlugin::Hook_GameFrame( bool simulating, bool bFirstTick, bool bLastTick )
@@ -124,8 +143,10 @@ void MySQLPlugin::Hook_GameFrame( bool simulating, bool bFirstTick, bool bLastTi
 	 * false | game is not ticking
 	 */
 
-	if (g_mysql)
-		g_mysql->RunFrame();
+	for (auto connection : g_vecMysqlConnections)
+	{
+		connection->RunFrame();
+	}
 }
 
 void MySQLPlugin::OnLevelInit( char const *pMapName,
@@ -135,12 +156,10 @@ void MySQLPlugin::OnLevelInit( char const *pMapName,
 									 bool loadGame,
 									 bool background )
 {
-	META_CONPRINTF("OnLevelInit(%s)\n", pMapName);
 }
 
 void MySQLPlugin::OnLevelShutdown()
 {
-	META_CONPRINTF("OnLevelShutdown()\n");
 }
 
 bool MySQLPlugin::Pause(char *error, size_t maxlen)

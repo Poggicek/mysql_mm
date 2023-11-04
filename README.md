@@ -8,11 +8,6 @@ MySQLMM is a simple non-blocking MySQL connector for MetaMod.
 - Windows & Linux support
 - Simple API
 
-# Todo
-
-- [x] Add query operation
-- [ ] Create interface and expose through meta factory
-
 # Interface
 
 MySQLMM will expose an interface in `OnMetamodQuery` which can then be queried with `g_SMAPI->MetaFactory("IMySQLMM", &ret, NULL)` by other plugins.

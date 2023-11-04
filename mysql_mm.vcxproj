@@ -168,6 +168,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\mysql_client.cpp" />
     <ClCompile Include="src\mysql_mm.cpp" />
     <ClCompile Include="src\database.cpp" />
     <ClCompile Include="src\mysql_result.cpp" />
@@ -175,6 +176,7 @@
     <ClCompile Include="src\operations\query.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\mysql_client.h" />
     <ClInclude Include="src\mysql_mm.h" />
     <ClInclude Include="src\database.h" />
     <ClInclude Include="src\mysql_result.h" />

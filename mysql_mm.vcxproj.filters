@@ -35,6 +35,9 @@
     <ClCompile Include="src\mysql_result.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\mysql_client.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\mysql_mm.h">
@@ -53,6 +56,9 @@
       <Filter>Header Files\public</Filter>
     </ClInclude>
     <ClInclude Include="src\mysql_result.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\mysql_client.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

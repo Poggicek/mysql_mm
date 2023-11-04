@@ -21,6 +21,7 @@ for sdk_name in MMSPlugin.sdks:
       'src/operations/connect.cpp',
       'src/operations/query.cpp',
       'src/mysql_result.cpp',
+      'src/mysql_client.cpp',
     ]
 
     if binary.compiler.target.platform == 'linux':
