@@ -1,6 +1,6 @@
 # MySQLMM
 
-MySQLMM is a simple threaded MySQL connector for MetaMod.
+MySQLMM is a simple non-blocking MySQL connector for MetaMod.
 
 # Features
 
