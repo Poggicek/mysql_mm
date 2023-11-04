@@ -74,7 +74,7 @@ bool MySQLPlugin::Load(PluginId id, ISmmAPI *ismm, char *error, size_t maxlen, b
 
 	// Test connection
 
-	MySQLConnectionInfo info{.host="85.255.1.237", .user="test", .pass="test987456321", .database="test"};
+	MySQLConnectionInfo info{.host="test", .user="test", .pass="test", .database="test"};
 	g_mysql = new MySQLConnection(info);
 
 	g_mysql->Connect([](bool connect) {
