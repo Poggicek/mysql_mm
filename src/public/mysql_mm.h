@@ -30,14 +30,6 @@ class IMySQLQuery;
 typedef std::function<void(bool)> ConnectCallbackFunc;
 typedef std::function<void(IMySQLQuery*)> QueryCallbackFunc;
 
-enum DBResult
-{
-	DBVal_Error = 0,		/**< Column number/field is invalid */
-	DBVal_TypeMismatch = 1,	/**< You cannot retrieve this data with this type */
-	DBVal_Null = 2,			/**< Field has no data (NULL) */
-	DBVal_Data = 3,			/**< Field has data */
-};
-
 typedef enum EMySQLType {
 	MM_MYSQL_TYPE_DECIMAL, MM_MYSQL_TYPE_TINY,
 	MM_MYSQL_TYPE_SHORT, MM_MYSQL_TYPE_LONG,

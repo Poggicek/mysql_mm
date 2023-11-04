@@ -145,7 +145,6 @@ void MySQLConnection::ThreadRun()
 
 void MySQLConnection::AddToThreadQueue(ThreadOperation* threadOperation)
 {
-
     if(!m_thread)
 	    m_thread = std::unique_ptr<std::thread>(new std::thread(&MySQLConnection::ThreadRun, this));
 
