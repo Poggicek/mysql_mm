@@ -56,7 +56,7 @@ void TConnectOp::RunThreadPart()
 		m_pCon->m_info.user,
 		m_pCon->m_info.pass,
 		m_pCon->m_info.database,
-		3306,
+		m_pCon->m_info.port,
 		socket,
 		((1) << 17)))
 	{
