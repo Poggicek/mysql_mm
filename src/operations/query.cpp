@@ -43,16 +43,14 @@ void TQueryOp::RunThreadPart()
 
 void TQueryOp::RunThinkPart()
 {
-	if (m_res)
-	{
-		m_pQuery = new CMySQLQuery(m_pCon, m_res);
-
-		m_callback(m_pQuery);
-	}
-	else if(m_szError[0])
+	if(m_szError[0])
 	{
 		ConMsg("%s", m_szError);
+		return;
 	}
+
+	m_pQuery = new CMySQLQuery(m_pCon, m_res);
+	m_callback(m_pQuery);
 }
 
 void TQueryOp::CancelThinkPart()

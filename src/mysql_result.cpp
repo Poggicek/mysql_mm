@@ -29,8 +29,16 @@ CMySQLResult::CMySQLResult(MYSQL_RES* res) : m_pRes(res)
 
 void CMySQLResult::Update()
 {
-	m_ColCount = mysql_num_fields(m_pRes);
-	m_RowCount = mysql_num_rows(m_pRes);
+	if(!m_pRes) 
+	{
+		m_ColCount = 0;
+		m_RowCount = 0;
+	} 
+	else 
+	{
+		m_ColCount = mysql_num_fields(m_pRes);
+		m_RowCount = mysql_num_rows(m_pRes);
+	}
 }
 
 int CMySQLResult::GetRowCount()
