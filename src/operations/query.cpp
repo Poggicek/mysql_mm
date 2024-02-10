@@ -31,6 +31,7 @@ TQueryOp::~TQueryOp()
 void TQueryOp::RunThreadPart()
 {
 	auto pDatabase = m_pCon->GetDatabase();
+	m_szError[0] = '\0';
 	if (mysql_query(pDatabase, m_szQuery.c_str()))
 	{
 		V_snprintf(m_szError, sizeof m_szError, "MySQL query error: %s\n", mysql_error(pDatabase));
