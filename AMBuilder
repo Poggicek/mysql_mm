@@ -6,14 +6,19 @@ import os
 # which in the end would ruin the multi-platform (unix, win etc) loading by metamod as it won't be able to append platform specific extension
 # so just fall back to the single binary.
 # Multi-sdk solutions should be manually loaded with a custom plugin loader (examples being sourcemod, stripper:source)
-for sdk_name in MMSPlugin.sdks:
-  for cxx in MMSPlugin.all_targets:
-    sdk = MMSPlugin.sdks[sdk_name]
-
-    if not cxx.target.arch in sdk.platformSpec[cxx.target.platform]:
-      continue
+for sdk_target in MMSPlugin.sdk_targets:
+    sdk = sdk_target.sdk
+    cxx = sdk_target.cxx
 
     binary = MMSPlugin.HL2Library(builder, cxx, MMSPlugin.plugin_name, sdk)
+    
+    binary.custom = [builder.tools.Protoc(protoc = sdk_target.protoc, sources = [
+      os.path.join(sdk['path'], 'common', 'network_connection.proto')
+    ])]
+    
+    binary.compiler.cxxincludes += [
+      os.path.join(builder.sourcePath, 'include'),
+    ]
 
     binary.sources += [
       'src/mysql_mm.cpp',
@@ -21,7 +26,7 @@ for sdk_name in MMSPlugin.sdks:
       'src/operations/connect.cpp',
       'src/operations/query.cpp',
       'src/mysql_result.cpp',
-      'src/mysql_client.cpp',
+      'src/mysql_client.cpp'
     ]
 
     if binary.compiler.target.platform == 'linux':
@@ -29,33 +34,27 @@ for sdk_name in MMSPlugin.sdks:
         '/lib/x86_64-linux-gnu/libmysqlclient.a',
         '-lz',
         '-lpthread',
-        '-lm',
+        '-lm'
       ]
       binary.compiler.postlink += ['-lrt', '-lssl', '-lcrypto']
 
     if binary.compiler.target.platform == 'windows':
       binary.compiler.defines += ['WIN32_LEAN_AND_MEAN']
       binary.compiler.cxxincludes += [
-        os.path.join(builder.sourcePath, 'vendor', 'mysql', 'include'),
+        os.path.join(builder.sourcePath, 'vendor', 'mysql', 'include')
       ]
       binary.compiler.postlink += [
         'crypt32.lib',
-        os.path.join(builder.sourcePath, 'vendor', 'mysql', 'lib', 'mysqlclient.lib'),
+        os.path.join(builder.sourcePath, 'vendor', 'mysql', 'lib', 'mysqlclient.lib')
       ]
 
-    if sdk_name in ['dota', 'cs2']:
+    if sdk_target in ['dota', 'cs2']:
       binary.sources += [
         os.path.join(sdk.path, 'tier1', 'convar.cpp'),
-      ]
-
-    if binary.compiler.target.platform == 'linux':
-      binary.sources += [
-        os.path.join(sdk.path, 'public', 'tier0', 'memoverride.cpp'),
+        os.path.join(sdk.path, 'public', 'tier0', 'memoverride.cpp')
       ]
 
     if cxx.target.arch == 'x86':
       binary.sources += ['sourcehook/sourcehook_hookmangen.cpp']
     nodes = builder.Add(binary)
     MMSPlugin.binaries += [nodes]
-
-  break
