@@ -1,0 +1,84 @@
+name: Build
+
+on:
+  push:
+    paths-ignore:
+      - LICENSE
+      - README.md
+
+  pull_request:
+    paths-ignore:
+      - LICENSE
+      - README.md
+env:
+  PROJECT_NAME: "mysql_mm"
+
+jobs:
+  build:
+    name: Build
+    runs-on: ${{ matrix.os }}
+    container: ${{ matrix.container }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        include:
+          - os: ubuntu-latest
+    steps:     
+      - name: Install dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo dpkg --add-architecture i386
+          sudo apt-get update
+          sudo apt-get install -y clang g++-multilib libmysqlclient-dev
+          
+      - name: Setup Python for AMBuild (Linux)
+        if: runner.os == 'Linux'
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          
+      - name: Select clang compiler (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          echo "CC=clang" >> $GITHUB_ENV
+          echo "CXX=clang++" >> $GITHUB_ENV
+          clang --version
+          clang++ --version
+          
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          path: project
+          submodules: recursive
+          
+      - name: Checkout Metamod
+        uses: actions/checkout@v4
+        with:
+          repository: alliedmodders/metamod-source
+          ref: master
+          submodules: recursive
+          
+      - name: Checkout AMBuild
+        uses: actions/checkout@v4
+        with:
+          repository: alliedmodders/ambuild
+          path: ambuild
+          
+      - name: Install AMBuild
+        run: |
+          cd ambuild && python setup.py install && cd ..
+          
+      - name: Build
+        working-directory: project
+        shell: bash
+        run: |
+          mkdir build && cd build
+          python ../configure.py --enable-optimize --symbol-files --sdks cs2
+          ambuild
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.PROJECT_NAME }}-${{ runner.os }}
+          path: project/build/package
