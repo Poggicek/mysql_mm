@@ -46,8 +46,8 @@ jobs:
         working-directory: mysql_mm
         shell: bash
         run: |
-          apt update -y 
-          apt -y install libmariadb-dev
+          apt-get update -y 
+          apt-get install -y libmysqlclient-dev
           mkdir build && cd build
           python ../configure.py --enable-optimize --symbol-files --sdks cs2
           ambuild
