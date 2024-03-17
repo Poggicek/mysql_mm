@@ -32,14 +32,6 @@ jobs:
           path: mysql_mm
           submodules: recursive
 
-      - name: Checkout Metamod
-        uses: actions/checkout@v4
-        with:
-          repository: alliedmodders/metamod-source
-          ref: master
-          path: mmsource-2.0
-          submodules: recursive
-
       - name: Checkout AMBuild
         uses: actions/checkout@v4
         with:
