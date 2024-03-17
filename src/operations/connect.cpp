@@ -24,6 +24,7 @@
 
 void TConnectOp::RunThreadPart()
 {
+	m_szError[0] = '\0';
 	MYSQL* mysql = mysql_init(NULL);
 
 	if (!mysql)
@@ -62,7 +63,6 @@ void TConnectOp::RunThreadPart()
 	{
 
 		mysql_close(mysql);
-		m_szError[0] = '\0';
 		strncpy(m_szError, mysql_error(mysql), sizeof m_szError);
 		return;
 	}
