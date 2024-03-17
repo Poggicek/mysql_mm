@@ -32,6 +32,14 @@ jobs:
           path: mysql_mm
           submodules: recursive
 
+      - name: Checkout Metamod
+        uses: actions/checkout@v4
+        with:
+          repository: alliedmodders/metamod-source
+          ref: master
+          path: mmsource-2.0
+          submodules: recursive
+
       - name: Checkout AMBuild
         uses: actions/checkout@v4
         with:
@@ -46,11 +54,8 @@ jobs:
         working-directory: mysql_mm
         shell: bash
         run: |
-          ls
-          ls hl2sdk-manifests
           mkdir build && cd build
-          ls
-          python ../configure.py --enable-optimize --symbol-files --sdks cs2 --hl2sdk-manifests=${{ github.workspace }}/mysql_mm/hl2sdk-manifests
+          python ../configure.py --enable-optimize --symbol-files --sdks cs2
           ambuild
 
       - name: Upload artifact
