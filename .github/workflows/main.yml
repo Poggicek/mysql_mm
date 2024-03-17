@@ -10,8 +10,6 @@ on:
     paths-ignore:
       - LICENSE
       - README.md
-env:
-  PROJECT_NAME: "mysql_mm"
 
 jobs:
   build:
@@ -80,5 +78,5 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ env.PROJECT_NAME }}-${{ runner.os }}
+          name: mysqlmm-${{ runner.os }}
           path: project/build/package
