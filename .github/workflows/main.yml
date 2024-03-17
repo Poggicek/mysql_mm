@@ -49,7 +49,7 @@ jobs:
           ls
           mkdir build && cd build
           ls
-          python ../configure.py --enable-optimize --symbol-files --sdks cs2 --hl2sdk-manifests=${{ github.workspace }}/mysql_mm/hl2sdk-manifests
+          python ../configure.py --enable-optimize --symbol-files --sdks cs2 --hl2sdk-manifests=${{ github.workspace }}/mysql_mm/hl2sdk-manifests-s
           ambuild
 
       - name: Upload artifact
