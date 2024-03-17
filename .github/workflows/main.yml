@@ -15,17 +15,35 @@ jobs:
   build:
     name: Build
     runs-on: ${{ matrix.os }}
-    env:
-        HL2SDKCS2: ${{ github.workspace }}/mysql_mm/hl2sdk-cs2
     container: ${{ matrix.container }}
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-20.04]
+        os: [ubuntu-latest]
         include:
-          - os: ubuntu-20.04
-            container: registry.gitlab.steamos.cloud/steamrt/sniper/sdk
-    steps:
+          - os: ubuntu-latest
+    steps:     
+      - name: Install dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo dpkg --add-architecture i386
+          sudo apt-get update
+          sudo apt-get install -y clang g++-multilib libmysqlclient-dev
+          
+      - name: Setup Python for AMBuild (Linux)
+        if: runner.os == 'Linux'
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Select clang compiler (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          echo "CC=clang" >> $GITHUB_ENV
+          echo "CXX=clang++" >> $GITHUB_ENV
+          clang --version
+          clang++ --version
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -46,8 +64,6 @@ jobs:
         working-directory: mysql_mm
         shell: bash
         run: |
-          apt-get update -y 
-          apt-get install -y default-libmysqlclient-dev mysql-server
           mkdir build && cd build
           python ../configure.py --enable-optimize --symbol-files --sdks cs2
           ambuild
