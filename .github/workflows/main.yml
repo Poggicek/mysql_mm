@@ -55,7 +55,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
-          name: mysql_mm-${{ runner.os }}
+          name: mysql_mm-${{ runner.os }}-${{ github.run_number }}
           path: mysql_mm/build/package
           local_dir: mysql_mm/build/package
           server_dir: /build/${{ github.run_number }}/
