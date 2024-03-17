@@ -15,60 +15,35 @@ jobs:
   build:
     name: Build
     runs-on: ${{ matrix.os }}
+    env:
+        HL2SDKCS2: ${{ github.workspace }}/cs2kz/hl2sdk-cs2
     container: ${{ matrix.container }}
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
+        os: [ubuntu-20.04]
         include:
-          - os: ubuntu-latest
-    steps:     
-      - name: Install dependencies (Linux)
-        if: runner.os == 'Linux'
-        run: |
-          sudo dpkg --add-architecture i386
-          sudo apt-get update
-          sudo apt-get install -y clang g++-multilib libmysqlclient-dev
-          
-      - name: Setup Python for AMBuild (Linux)
-        if: runner.os == 'Linux'
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
-          
-      - name: Select clang compiler (Linux)
-        if: runner.os == 'Linux'
-        run: |
-          echo "CC=clang" >> $GITHUB_ENV
-          echo "CXX=clang++" >> $GITHUB_ENV
-          clang --version
-          clang++ --version
-          
+          - os: ubuntu-20.04
+            container: registry.gitlab.steamos.cloud/steamrt/sniper/sdk
+    steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          path: project
+          path: mysql_mm
           submodules: recursive
-          
-      - name: Checkout Metamod
-        uses: actions/checkout@v4
-        with:
-          repository: alliedmodders/metamod-source
-          ref: master
-          submodules: recursive
-          
+
       - name: Checkout AMBuild
         uses: actions/checkout@v4
         with:
           repository: alliedmodders/ambuild
           path: ambuild
-          
+
       - name: Install AMBuild
         run: |
           cd ambuild && python setup.py install && cd ..
-          
+
       - name: Build
-        working-directory: project
+        working-directory: mysql_mm
         shell: bash
         run: |
           mkdir build && cd build
@@ -78,5 +53,8 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
-          name: mysqlmm-${{ runner.os }}
-          path: project/build/package
+          name: mysql_mm-${{ runner.os }}
+          path: mysql_mm/build/package
+          local_dir: mysql_mm/build/package
+          server_dir: /build/${{ github.run_number }}/
+          secure: false
