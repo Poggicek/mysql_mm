@@ -46,7 +46,9 @@ jobs:
         working-directory: mysql_mm
         shell: bash
         run: |
+          ls
           mkdir build && cd build
+          ls
           python ../configure.py --enable-optimize --symbol-files --sdks cs2 --hl2sdk-manifests=${{ github.workspace }}/mysql_mm/hl2sdk-manifests
           ambuild
 
