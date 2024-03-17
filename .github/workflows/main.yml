@@ -16,7 +16,7 @@ jobs:
     name: Build
     runs-on: ${{ matrix.os }}
     env:
-        HL2SDKCS2: ${{ github.workspace }}/cs2kz/hl2sdk-cs2
+        HL2SDKCS2: ${{ github.workspace }}/mysql_mm/hl2sdk-cs2
     container: ${{ matrix.container }}
     strategy:
       fail-fast: false
