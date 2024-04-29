@@ -19,9 +19,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
+        os: [ubuntu-20.04]
         include:
-          - os: ubuntu-latest
+          - os: ubuntu-20.04
     steps:     
       - name: Install dependencies (Linux)
         if: runner.os == 'Linux'
