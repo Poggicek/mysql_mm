@@ -26,7 +26,7 @@
 #include "operations/query.h"
 #include <cstdarg>
 
-extern std::vector<MySQLConnection*> g_vecMysqlConnections;
+extern std::vector<MySQLConnection *> g_vecMysqlConnections;
 
 MySQLConnection::MySQLConnection(const MySQLConnectionInfo info)
 {
@@ -36,22 +36,22 @@ MySQLConnection::MySQLConnection(const MySQLConnectionInfo info)
 MySQLConnection::~MySQLConnection()
 {
     ConMsg("Destroying MySQL connection %s\n", m_info.database);
-	if (m_thread)
-	{
+    if (m_thread)
+    {
         {
             std::lock_guard<std::mutex> lock(m_Lock);
             m_Terminate = true;
             m_QueueEvent.notify_all();
         }
 
-		m_thread->join();
-		m_thread.reset();
+        m_thread->join();
+        m_thread.reset();
         m_Terminate = false;
-	}
+    }
 
     while (!m_ThinkQueue.empty())
     {
-        ThreadOperation* op = m_ThinkQueue.front();
+        ThreadOperation *op = m_ThinkQueue.front();
         m_ThinkQueue.pop();
 
         op->CancelThinkPart();
@@ -64,12 +64,12 @@ MySQLConnection::~MySQLConnection()
 
 void MySQLConnection::Connect(ConnectCallbackFunc callback)
 {
-    TConnectOp* op = new TConnectOp(this, callback);
+    TConnectOp *op = new TConnectOp(this, callback);
 
     AddToThreadQueue(op);
 }
 
-void MySQLConnection::Query(char* query, QueryCallbackFunc callback)
+void MySQLConnection::Query(char *query, QueryCallbackFunc callback)
 {
     if (!m_pDatabase)
     {
@@ -77,12 +77,12 @@ void MySQLConnection::Query(char* query, QueryCallbackFunc callback)
         return;
     }
 
-    TQueryOp* op = new TQueryOp(this, std::string(query), callback);
+    TQueryOp *op = new TQueryOp(this, std::string(query), callback);
 
     AddToThreadQueue(op);
 }
 
-void MySQLConnection::Query(const char* query, QueryCallbackFunc callback, ...)
+void MySQLConnection::Query(const char *query, QueryCallbackFunc callback, ...)
 {
     va_list args;
     va_start(args, callback);
@@ -102,7 +102,7 @@ void MySQLConnection::Query(const char* query, QueryCallbackFunc callback, ...)
         return;
     }
 
-    TQueryOp* op = new TQueryOp(this, std::string(zc.data(), zc.size()), callback);
+    TQueryOp *op = new TQueryOp(this, std::string(zc.data(), zc.size()), callback);
 
     AddToThreadQueue(op);
 }
@@ -118,7 +118,7 @@ void MySQLConnection::RunFrame()
     if (!m_ThinkQueue.size())
         return;
 
-    ThreadOperation* op;
+    ThreadOperation *op;
     {
         std::lock_guard<std::mutex> lock(m_ThinkLock);
         op = m_ThinkQueue.front();
@@ -136,7 +136,7 @@ void MySQLConnection::ThreadRun()
 
     std::unique_lock<std::mutex> lock(m_Lock);
 
-    while(true)
+    while (true)
     {
         if (m_threadQueue.empty())
         {
@@ -147,7 +147,7 @@ void MySQLConnection::ThreadRun()
             continue;
         }
 
-        ThreadOperation* op = m_threadQueue.front();
+        ThreadOperation *op = m_threadQueue.front();
         m_threadQueue.pop();
 
         lock.unlock();
@@ -164,10 +164,10 @@ void MySQLConnection::ThreadRun()
     mysql_thread_end();
 }
 
-void MySQLConnection::AddToThreadQueue(ThreadOperation* threadOperation)
+void MySQLConnection::AddToThreadQueue(ThreadOperation *threadOperation)
 {
-    if(!m_thread)
-	    m_thread = std::unique_ptr<std::thread>(new std::thread(&MySQLConnection::ThreadRun, this));
+    if (!m_thread)
+        m_thread = std::unique_ptr<std::thread>(new std::thread(&MySQLConnection::ThreadRun, this));
 
     {
         std::lock_guard<std::mutex> lock(m_Lock);
@@ -186,15 +186,15 @@ unsigned int MySQLConnection::GetAffectedRows()
     return mysql_affected_rows(m_pDatabase);
 }
 
-std::string MySQLConnection::Escape(const char* string)
+std::string MySQLConnection::Escape(const char *string)
 {
-    return Escape(const_cast<char*>(string));
+    return Escape(const_cast<char *>(string));
 }
 
-std::string MySQLConnection::Escape(char* string)
+std::string MySQLConnection::Escape(char *string)
 {
     size_t size = strlen(string);
-    char* buffer = new char[size * 2 + 1];
+    char *buffer = new char[size * 2 + 1];
 
     mysql_real_escape_string(m_pDatabase, buffer, string, size);
 

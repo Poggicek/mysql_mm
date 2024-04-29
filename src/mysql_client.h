@@ -17,7 +17,6 @@
  * this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 #pragma once
 
 #include "public/mysql_mm.h"
@@ -25,5 +24,5 @@
 class CMySQLClient : public IMySQLClient
 {
 public:
-	IMySQLConnection* CreateMySQLConnection(MySQLConnectionInfo info);
+	IMySQLConnection *CreateMySQLConnection(MySQLConnectionInfo info);
 };

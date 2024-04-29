@@ -25,17 +25,17 @@
 class TConnectOp : public ThreadOperation
 {
 public:
-	TConnectOp(MySQLConnection* con, ConnectCallbackFunc func) : m_pCon(con), m_callback(func)
+	TConnectOp(MySQLConnection *con, ConnectCallbackFunc func) : m_pCon(con), m_callback(func)
 	{
-
 	}
 
 	void RunThreadPart();
 	void CancelThinkPart();
 	void RunThinkPart();
+
 private:
-	MySQLConnection* m_pCon;
+	MySQLConnection *m_pCon;
 	ConnectCallbackFunc m_callback;
-	MYSQL* m_pDatabase = nullptr;
+	MYSQL *m_pDatabase = nullptr;
 	char m_szError[255];
 };

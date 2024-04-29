@@ -22,19 +22,19 @@
 #include <string.h>
 #include "mysql_result.h"
 
-CMySQLResult::CMySQLResult(MYSQL_RES* res) : m_pRes(res)
+CMySQLResult::CMySQLResult(MYSQL_RES *res) : m_pRes(res)
 {
 	Update();
 };
 
 void CMySQLResult::Update()
 {
-	if(!m_pRes) 
+	if (!m_pRes)
 	{
 		m_ColCount = 0;
 		m_RowCount = 0;
-	} 
-	else 
+	}
+	else
 	{
 		m_ColCount = mysql_num_fields(m_pRes);
 		m_RowCount = mysql_num_rows(m_pRes);
@@ -51,7 +51,7 @@ int CMySQLResult::GetFieldCount()
 	return m_ColCount;
 }
 
-bool CMySQLResult::FieldNameToNum(const char* name, unsigned int* columnId)
+bool CMySQLResult::FieldNameToNum(const char *name, unsigned int *columnId)
 {
 	unsigned int total = GetFieldCount();
 
@@ -67,14 +67,14 @@ bool CMySQLResult::FieldNameToNum(const char* name, unsigned int* columnId)
 	return false;
 }
 
-const char* CMySQLResult::FieldNumToName(unsigned int colId)
+const char *CMySQLResult::FieldNumToName(unsigned int colId)
 {
 	if (colId >= GetFieldCount())
 	{
 		return NULL;
 	}
 
-	MYSQL_FIELD* field = mysql_fetch_field_direct(m_pRes, colId);
+	MYSQL_FIELD *field = mysql_fetch_field_direct(m_pRes, colId);
 	return field ? (field->name ? field->name : "") : "";
 }
 
@@ -83,7 +83,7 @@ bool CMySQLResult::MoreRows()
 	return m_CurRow < m_RowCount;
 }
 
-IMySQLRow* CMySQLResult::FetchRow()
+IMySQLRow *CMySQLResult::FetchRow()
 {
 	if (m_CurRow >= m_RowCount)
 	{
@@ -97,11 +97,9 @@ IMySQLRow* CMySQLResult::FetchRow()
 	return this;
 }
 
-IMySQLRow* CMySQLResult::CurrentRow()
+IMySQLRow *CMySQLResult::CurrentRow()
 {
-	if (!m_pRes
-		|| !m_CurRow
-		|| m_CurRow > m_RowCount)
+	if (!m_pRes || !m_CurRow || m_CurRow > m_RowCount)
 	{
 		return NULL;
 	}
@@ -123,7 +121,7 @@ EMySQLType CMySQLResult::GetFieldType(unsigned int field)
 		return MM_MYSQL_TYPE_UNKNOWN;
 	}
 
-	MYSQL_FIELD* fld = mysql_fetch_field_direct(m_pRes, field);
+	MYSQL_FIELD *fld = mysql_fetch_field_direct(m_pRes, field);
 	if (!fld)
 	{
 		return MM_MYSQL_TYPE_UNKNOWN;
@@ -142,13 +140,14 @@ bool CMySQLResult::IsNull(unsigned int columnId)
 	return (m_Row[columnId] == NULL);
 }
 
-char* CMySQLResult::GetString(unsigned int columnId, size_t* length)
+char *CMySQLResult::GetString(unsigned int columnId, size_t *length)
 {
 	if (columnId >= m_ColCount)
 	{
 		return nullptr;
 	}
-	else if (m_Row[columnId] == NULL) {
+	else if (m_Row[columnId] == NULL)
+	{
 		if (length)
 		{
 			*length = 0;
@@ -178,7 +177,8 @@ float CMySQLResult::GetFloat(unsigned int columnId)
 	{
 		return 0.0f;
 	}
-	else if (m_Row[columnId] == NULL) {
+	else if (m_Row[columnId] == NULL)
+	{
 		return 0.0f;
 	}
 
@@ -191,20 +191,21 @@ int CMySQLResult::GetInt(unsigned int columnId)
 	{
 		return 0;
 	}
-	else if (m_Row[columnId] == NULL) {
+	else if (m_Row[columnId] == NULL)
+	{
 		return 0;
 	}
 
 	return atoi(m_Row[columnId]);
 }
 
-CMySQLQuery::CMySQLQuery(MySQLConnection* db, MYSQL_RES* res) : m_pDatabase(db), m_res(res)
+CMySQLQuery::CMySQLQuery(MySQLConnection *db, MYSQL_RES *res) : m_pDatabase(db), m_res(res)
 {
 	m_insertId = m_pDatabase->GetInsertID();
 	m_affectedRows = m_pDatabase->GetAffectedRows();
 }
 
-IMySQLResult* CMySQLQuery::GetResultSet()
+IMySQLResult *CMySQLQuery::GetResultSet()
 {
 	if (m_res.m_pRes == NULL)
 	{
@@ -221,7 +222,8 @@ bool CMySQLQuery::FetchMoreResults()
 	{
 		return false;
 	}
-	else if (!mysql_more_results(pDatabase)) {
+	else if (!mysql_more_results(pDatabase))
+	{
 		return false;
 	}
 
@@ -252,7 +254,6 @@ CMySQLQuery::~CMySQLQuery()
 		mysql_free_result(m_res.m_pRes);
 	}
 }
-
 
 unsigned int CMySQLQuery::GetInsertId()
 {

@@ -25,21 +25,21 @@
 void TConnectOp::RunThreadPart()
 {
 	m_szError[0] = '\0';
-	MYSQL* mysql = mysql_init(NULL);
+	MYSQL *mysql = mysql_init(NULL);
 
 	if (!mysql)
 		Error("Uh oh, mysql is null!");
 
-	const char* host = NULL, * socket = NULL;
+	const char *host = NULL, *socket = NULL;
 
 	int timeout = 60;
 
-	mysql_options(mysql, MYSQL_OPT_CONNECT_TIMEOUT, (const char*)&timeout);
-	mysql_options(mysql, MYSQL_OPT_READ_TIMEOUT, (const char*)&timeout);
-	mysql_options(mysql, MYSQL_OPT_WRITE_TIMEOUT, (const char*)&timeout);
+	mysql_options(mysql, MYSQL_OPT_CONNECT_TIMEOUT, (const char *)&timeout);
+	mysql_options(mysql, MYSQL_OPT_READ_TIMEOUT, (const char *)&timeout);
+	mysql_options(mysql, MYSQL_OPT_WRITE_TIMEOUT, (const char *)&timeout);
 
 	bool my_true = true;
-	mysql_options(mysql, MYSQL_OPT_RECONNECT, (const char*)&my_true); // deprecated
+	mysql_options(mysql, MYSQL_OPT_RECONNECT, (const char *)&my_true); // deprecated
 
 	if (m_pCon->m_info.host[0] == '/')
 	{
@@ -53,13 +53,13 @@ void TConnectOp::RunThreadPart()
 	}
 
 	if (!mysql_real_connect(mysql,
-		host,
-		m_pCon->m_info.user,
-		m_pCon->m_info.pass,
-		m_pCon->m_info.database,
-		m_pCon->m_info.port,
-		socket,
-		((1) << 17)))
+							host,
+							m_pCon->m_info.user,
+							m_pCon->m_info.pass,
+							m_pCon->m_info.database,
+							m_pCon->m_info.port,
+							socket,
+							((1) << 17)))
 	{
 
 		mysql_close(mysql);
