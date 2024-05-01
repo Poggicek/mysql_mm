@@ -30,49 +30,52 @@ class CMySQLQuery;
 class CMySQLResult : public IMySQLResult, IMySQLRow
 {
 	friend class CMySQLQuery;
+
 public:
-	CMySQLResult(MYSQL_RES* res);
+	CMySQLResult(MYSQL_RES *res);
 
 	void Update();
 
 	int GetRowCount();
 	int GetFieldCount();
-	bool FieldNameToNum(const char* name, unsigned int* columnId);
-	const char* FieldNumToName(unsigned int colId);
+	bool FieldNameToNum(const char *name, unsigned int *columnId);
+	const char *FieldNumToName(unsigned int colId);
 	bool MoreRows();
-	IMySQLRow* FetchRow();
-	IMySQLRow* CurrentRow();
+	IMySQLRow *FetchRow();
+	IMySQLRow *CurrentRow();
 	bool Rewind();
 	EMySQLType GetFieldType(unsigned int field);
-	char* GetString(unsigned int columnId, size_t* length = nullptr);
+	char *GetString(unsigned int columnId, size_t *length = nullptr);
 	size_t GetDataSize(unsigned int columnId);
 	float GetFloat(unsigned int columnId);
 	int GetInt(unsigned int columnId);
 	bool IsNull(unsigned int columnId);
 
 private:
-	//MYSQL* m_pDatabase;
-	MYSQL_RES* m_pRes;
+	// MYSQL* m_pDatabase;
+	MYSQL_RES *m_pRes;
 
 	unsigned int m_ColCount = 0;
 	unsigned int m_RowCount = 0;
 	unsigned int m_CurRow = 0;
 	MYSQL_ROW m_Row;
-	unsigned long* m_Lengths = 0;
+	unsigned long *m_Lengths = 0;
 };
 
 class CMySQLQuery : public IMySQLQuery
 {
 	friend class CMySQLResult;
+
 public:
-	CMySQLQuery(MySQLConnection* db, MYSQL_RES* res);
+	CMySQLQuery(MySQLConnection *db, MYSQL_RES *res);
 	~CMySQLQuery();
-	IMySQLResult* GetResultSet();
+	IMySQLResult *GetResultSet();
 	bool FetchMoreResults();
 	unsigned int GetInsertId();
 	unsigned int GetAffectedRows();
+
 private:
-	MySQLConnection* m_pDatabase;
+	MySQLConnection *m_pDatabase;
 	CMySQLResult m_res;
 	unsigned int m_insertId;
 	unsigned int m_affectedRows;

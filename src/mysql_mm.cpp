@@ -36,9 +36,9 @@ SH_DECL_HOOK3_void(IServerGameDLL, GameFrame, SH_NOATTRIB, 0, bool, bool, bool);
 MySQLPlugin g_MySQLPlugin;
 IServerGameDLL *server = nullptr;
 IVEngineServer *engine = nullptr;
-IMySQLClient* g_mysqlClient = nullptr;
+IMySQLClient *g_mysqlClient = nullptr;
 
-std::vector<MySQLConnection*> g_vecMysqlConnections;
+std::vector<MySQLConnection *> g_vecMysqlConnections;
 
 // Should only be called within the active game loop (i e map should be loaded and active)
 // otherwise that'll be nullptr!
@@ -46,7 +46,7 @@ CGlobalVars *GetGameGlobals()
 {
 	INetworkGameServer *server = g_pNetworkServerService->GetIGameServer();
 
-	if(!server)
+	if (!server)
 		return nullptr;
 
 	return g_pNetworkServerService->GetIGameServer()->GetGlobals();
@@ -62,9 +62,9 @@ bool MySQLPlugin::Load(PluginId id, ISmmAPI *ismm, char *error, size_t maxlen, b
 	GET_V_IFACE_ANY(GetEngineFactory, g_pNetworkServerService, INetworkServerService, NETWORKSERVERSERVICE_INTERFACE_VERSION);
 
 	// Required to get the IMetamodListener events
-	g_SMAPI->AddListener( this, this );
+	g_SMAPI->AddListener(this, this);
 
-	META_CONPRINTF( "Starting plugin.\n" );
+	META_CONPRINTF("Starting plugin.\n");
 
 	SH_ADD_HOOK_MEMFUNC(IServerGameDLL, GameFrame, server, this, &MySQLPlugin::Hook_GameFrame, true);
 
@@ -122,11 +122,9 @@ bool MySQLPlugin::Unload(char *error, size_t maxlen)
 
 void MySQLPlugin::AllPluginsLoaded()
 {
-	
-
 }
 
-void* MySQLPlugin::OnMetamodQuery(const char* iface, int* ret)
+void *MySQLPlugin::OnMetamodQuery(const char *iface, int *ret)
 {
 	if (!strcmp(iface, MYSQLMM_INTERFACE))
 	{
@@ -138,7 +136,7 @@ void* MySQLPlugin::OnMetamodQuery(const char* iface, int* ret)
 	return nullptr;
 }
 
-void MySQLPlugin::Hook_GameFrame( bool simulating, bool bFirstTick, bool bLastTick )
+void MySQLPlugin::Hook_GameFrame(bool simulating, bool bFirstTick, bool bLastTick)
 {
 	/**
 	 * simulating:
@@ -153,12 +151,12 @@ void MySQLPlugin::Hook_GameFrame( bool simulating, bool bFirstTick, bool bLastTi
 	}
 }
 
-void MySQLPlugin::OnLevelInit( char const *pMapName,
-									 char const *pMapEntities,
-									 char const *pOldLevel,
-									 char const *pLandmarkName,
-									 bool loadGame,
-									 bool background )
+void MySQLPlugin::OnLevelInit(char const *pMapName,
+							  char const *pMapEntities,
+							  char const *pOldLevel,
+							  char const *pLandmarkName,
+							  bool loadGame,
+							  bool background)
 {
 }
 

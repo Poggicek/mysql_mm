@@ -44,7 +44,7 @@ void TQueryOp::RunThreadPart()
 
 void TQueryOp::RunThinkPart()
 {
-	if(m_szError[0])
+	if (m_szError[0])
 	{
 		ConMsg("%s\n", m_szError);
 		return;
